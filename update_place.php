@@ -13,9 +13,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $description = trim($_POST['description']);
     $image_url = trim($_POST['image_url']);
     $location = trim($_POST['location']);
+    $dress_code = trim($_POST['dress_code']);
+    $best_time = trim($_POST['best_time']);
+    $ticket_price = trim($_POST['ticket_price']);
+    $restaurants = trim($_POST['restaurants']);
 
-    $stmt = $pdo->prepare("UPDATE places SET name = ?, description = ?, image_url = ?, location = ? WHERE id = ?");
-    if ($stmt->execute([$name, $description, $image_url, $location, $place_id])) {
+    $stmt = $pdo->prepare("UPDATE places SET name = ?, description = ?, image_url = ?, location = ?, dress_code = ?, best_time = ?, ticket_price = ?, restaurants = ? WHERE id = ?");
+    if ($stmt->execute([$name, $description, $image_url, $location, $dress_code, $best_time, $ticket_price, $restaurants, $place_id])) {
         setFlash('success', 'Destination updated successfully!');
     } else {
         setFlash('error', 'Failed to update destination.');

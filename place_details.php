@@ -41,14 +41,29 @@ require_once 'includes/header.php';
                     <input type="text" name="name" class="form-control" value="<?= htmlspecialchars($place['name']) ?>" required>
                 </div>
                 <div class="form-group">
+                    <label class="form-label">Location</label>
+                    <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($place['location']) ?>" required>
+                </div>
+                <div class="form-group">
                     <label class="form-label">Image URL</label>
                     <input type="text" name="image_url" class="form-control" value="<?= htmlspecialchars($place['image_url']) ?>" required>
-                    <small class="text-muted">Paste a new image link here to change the photo.</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Dress Code</label>
+                    <input type="text" name="dress_code" class="form-control" value="<?= htmlspecialchars($place['dress_code'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Best Time to Visit</label>
+                    <input type="text" name="best_time" class="form-control" value="<?= htmlspecialchars($place['best_time'] ?? '') ?>">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ticket Price</label>
+                    <input type="text" name="ticket_price" class="form-control" value="<?= htmlspecialchars($place['ticket_price'] ?? '') ?>">
                 </div>
             </div>
             <div class="form-group">
-                <label class="form-label">Location</label>
-                <input type="text" name="location" class="form-control" value="<?= htmlspecialchars($place['location']) ?>" required>
+                <label class="form-label">Nearby Restaurants (comma separated)</label>
+                <input type="text" name="restaurants" class="form-control" value="<?= htmlspecialchars($place['restaurants'] ?? '') ?>">
             </div>
             <div class="form-group">
                 <label class="form-label">Description</label>
@@ -93,9 +108,32 @@ require_once 'includes/header.php';
 
             <p class="text-xl text-muted mb-4"><i class="fa-solid fa-location-dot" style="color: var(--primary-color);"></i> <?= htmlspecialchars($place['location']) ?></p>
             
-            <div class="description-box p-4 bg-white mb-5" style="border-radius: var(--border-radius-lg); border: 1px solid #eee; line-height: 1.8;">
+            <div class="description-box p-4 bg-white mb-4" style="border-radius: var(--border-radius-lg); border: 1px solid #eee; line-height: 1.8;">
                 <h3 class="mb-3">About this destination</h3>
                 <p><?= nl2br(htmlspecialchars($place['description'])) ?></p>
+            </div>
+
+            <!-- Quick Guide Table/Grid -->
+            <div class="card p-4 mb-5" style="border-color: #f1f1f1;">
+                <h4 class="mb-4">Traveler's Quick Guide</h4>
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="info-item">
+                        <small class="text-muted block mb-1"><i class="fa-solid fa-shirt"></i> Dress Code</small>
+                        <p class="font-bold"><?= htmlspecialchars($place['dress_code'] ?? 'N/A') ?></p>
+                    </div>
+                    <div class="info-item">
+                        <small class="text-muted block mb-1"><i class="fa-solid fa-sun"></i> Best Time</small>
+                        <p class="font-bold"><?= htmlspecialchars($place['best_time'] ?? 'N/A') ?></p>
+                    </div>
+                    <div class="info-item">
+                        <small class="text-muted block mb-1"><i class="fa-solid fa-ticket"></i> Entry Fee</small>
+                        <p class="font-bold"><?= htmlspecialchars($place['ticket_price'] ?? 'Free') ?></p>
+                    </div>
+                    <div class="info-item">
+                        <small class="text-muted block mb-1"><i class="fa-solid fa-utensils"></i> Nearby Eats</small>
+                        <p class="font-bold"><?= htmlspecialchars($place['restaurants'] ?? 'Local stalls') ?></p>
+                    </div>
+                </div>
             </div>
 
             <?php if($is_logged_in && !$is_admin): ?>
