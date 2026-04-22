@@ -39,9 +39,9 @@ $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <p class="text-muted mb-3"><i class="fa-solid fa-location-dot" style="color: var(--primary-color);"></i> <?= htmlspecialchars($place['location']) ?></p>
             <p class="card-text"><?= htmlspecialchars(substr($place['description'], 0, 100)) ?>...</p>
             
-            <div class="card-footer">
-                <a href="places.php" class="btn btn-secondary btn-block">
-                    <i class="fa-solid fa-eye"></i> View Details
+            <div class="card-footer mt-4">
+                <a href="place_details.php?id=<?= $place['id'] ?>" class="btn btn-secondary btn-block">
+                    <i class="fa-solid fa-circle-info"></i> View Details
                 </a>
             </div>
         </div>

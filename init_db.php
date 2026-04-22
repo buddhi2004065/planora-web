@@ -15,6 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
     name VARCHAR(100) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
+    is_admin TINYINT(1) DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )";
 $pdo->exec($userTable);
@@ -75,7 +76,17 @@ foreach ($places as $place) {
     $insert->execute($place);
 }
 
-setFlash('success', 'Database initialized successfully!');
+// Seed Default Admin
+$adminEmail = 'admin@planora.com';
+$adminPass = password_hash('admin123', PASSWORD_DEFAULT);
+$checkAdmin = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+$checkAdmin->execute([$adminEmail]);
+if (!$checkAdmin->fetch()) {
+    $insAdmin = $pdo->prepare("INSERT INTO users (name, email, password, is_admin) VALUES (?, ?, ?, 1)");
+    $insAdmin->execute(['Super Admin', $adminEmail, $adminPass]);
+}
+
+setFlash('success', 'Database initialized successfully! Admin: admin@planora.com / admin123');
 header("Location: index.php");
 exit;
 ?>
