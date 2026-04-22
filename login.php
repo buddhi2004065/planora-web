@@ -29,18 +29,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 require_once 'includes/header.php';
 ?>
 <div class="form-container">
-    <h2 class="mb-4 text-center">Welcome Back</h2>
+    <h2 class="form-title">Welcome Back</h2>
+    <p class="text-center text-muted mb-4">Plan your next adventure by logging in.</p>
     <form method="POST" action="">
         <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" placeholder="Email@example.com" required>
         </div>
         <div class="form-group">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Log In</button>
+        <button type="submit" class="btn btn-primary btn-block">Log In <i class="fa-solid fa-right-to-bracket"></i></button>
     </form>
-    <p class="text-center mt-3">Don't have an account? <a href="register.php">Sign up</a></p>
+    <p class="text-center mt-4">Don't have an account? <a href="register.php" style="color: var(--primary-color); font-weight: 700;">Sign up</a></p>
 </div>
 <?php require_once 'includes/footer.php'; ?>

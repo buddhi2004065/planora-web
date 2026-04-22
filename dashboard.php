@@ -27,25 +27,38 @@ require_once 'includes/header.php';
         <a href="create_plan.php" class="btn btn-primary mt-3">Create Plan</a>
     </div>
 <?php else: ?>
-    <div class="grid grid-cols-2">
-        <?php foreach($plans as $plan): ?>
-        <?php 
-            // Get item count
-            $itemStmt = $pdo->prepare("SELECT COUNT(*) FROM plan_items WHERE plan_id = ?");
-            $itemStmt->execute([$plan['id']]);
-            $itemCount = $itemStmt->fetchColumn();
-        ?>
-        <div class="plan-item">
-            <div class="plan-item-info">
-                <h3><?= htmlspecialchars($plan['plan_name']) ?></h3>
-                <p><i class="fa-regular fa-calendar-days"></i> Created on <?= date('M d, Y', strtotime($plan['created_at'])) ?> &bull; <?= $itemCount ?> places</p>
+<div class="grid grid-cols-1 grid-cols-2">
+    <?php foreach($plans as $plan): ?>
+    <?php 
+        // Get item count
+        $itemStmt = $pdo->prepare("SELECT COUNT(*) FROM plan_items WHERE plan_id = ?");
+        $itemStmt->execute([$plan['id']]);
+        $itemCount = $itemStmt->fetchColumn();
+    ?>
+    <div class="card">
+        <div class="card-body">
+            <div class="flex justify-between items-center mb-3">
+                <div class="plan-icon" style="background: var(--primary-light); color: var(--primary-color); width: 50px; height: 50px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">
+                    <i class="fa-solid fa-map"></i>
+                </div>
+                <div class="text-right">
+                    <span class="card-badge" style="position: static;"><?= $itemCount ?> Destination<?= $itemCount != 1 ? 's' : '' ?></span>
+                </div>
             </div>
-            <div class="plan-actions">
-                <a href="view_plan.php?id=<?= $plan['id'] ?>" class="btn btn-secondary btn-sm" title="View Plan"><i class="fa-solid fa-eye"></i></a>
-                <a href="delete_plan.php?id=<?= $plan['id'] ?>" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this plan?');" title="Delete Plan"><i class="fa-solid fa-trash"></i></a>
+            <h3 class="card-title"><?= htmlspecialchars($plan['plan_name']) ?></h3>
+            <p class="text-muted"><i class="fa-regular fa-calendar-days"></i> Created on <?= date('M d, Y', strtotime($plan['created_at'])) ?></p>
+            
+            <div class="flex gap-2 mt-4">
+                <a href="view_plan.php?id=<?= $plan['id'] ?>" class="btn btn-primary btn-block">
+                    <i class="fa-solid fa-folder-open"></i> Manage Plan
+                </a>
+                <a href="delete_plan.php?id=<?= $plan['id'] ?>" class="btn btn-secondary" style="padding: 0.8rem;" onclick="return confirm('Delete this plan?');">
+                    <i class="fa-solid fa-trash-can" style="color: var(--danger);"></i>
+                </a>
             </div>
         </div>
-        <?php endforeach; ?>
     </div>
+    <?php endforeach; ?>
+</div>
 <?php endif; ?>
 <?php require_once 'includes/footer.php'; ?>

@@ -39,26 +39,27 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 require_once 'includes/header.php';
 ?>
 <div class="form-container">
-    <h2 class="mb-4 text-center">Create an Account</h2>
+    <h2 class="form-title">Join Planora</h2>
+    <p class="text-center text-muted mb-4">Start organizing your trips like a pro.</p>
     <form method="POST" action="">
         <div class="form-group">
             <label class="form-label">Full Name</label>
-            <input type="text" name="name" class="form-control" required>
+            <input type="text" name="name" class="form-control" placeholder="John Doe" required>
         </div>
         <div class="form-group">
             <label class="form-label">Email Address</label>
-            <input type="email" name="email" class="form-control" required>
+            <input type="email" name="email" class="form-control" placeholder="Email@example.com" required>
         </div>
         <div class="form-group">
             <label class="form-label">Password</label>
-            <input type="password" name="password" class="form-control" required>
+            <input type="password" name="password" class="form-control" placeholder="••••••••" required>
         </div>
         <div class="form-group">
             <label class="form-label">Confirm Password</label>
-            <input type="password" name="confirm_password" class="form-control" required>
+            <input type="password" name="confirm_password" class="form-control" placeholder="••••••••" required>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Register</button>
+        <button type="submit" class="btn btn-primary btn-block">Create Account <i class="fa-solid fa-user-plus"></i></button>
     </form>
-    <p class="text-center mt-3">Already have an account? <a href="login.php">Log in</a></p>
+    <p class="text-center mt-4">Already have an account? <a href="login.php" style="color: var(--primary-color); font-weight: 700;">Log in</a></p>
 </div>
 <?php require_once 'includes/footer.php'; ?>
