@@ -72,15 +72,19 @@ require_once 'includes/header.php';
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin="" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 
+<!-- Leaflet Routing Machine CSS/JS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.css" />
+<script src="https://unpkg.com/leaflet-routing-machine@latest/dist/leaflet-routing-machine.js"></script>
+
 <div class="dashboard-header flex-column md-flex-row gap-4" style="align-items: flex-start;">
     <div>
         <h2 class="form-title" style="text-align: left; margin-bottom: 0.5rem;"><?= htmlspecialchars($plan['plan_name']) ?></h2>
         <div class="flex gap-4 flex-wrap">
             <span class="badge" style="background:var(--primary-light); color:var(--primary-color); padding:0.5rem 1rem; border-radius:30px; font-weight:700;">
-                <i class="fa-solid fa-road"></i> <?= round($totalDistance, 2) ?> km
+                <i class="fa-solid fa-road"></i> <span id="route-distance"><?= round($totalDistance, 2) ?></span> km
             </span>
             <span class="badge" style="background:#e0f2fe; color:#0369a1; padding:0.5rem 1rem; border-radius:30px; font-weight:700;">
-                <i class="fa-solid fa-clock"></i> ~<?= floor($totalTimeMinutes/60) ?>h <?= $totalTimeMinutes%60 ?>m
+                <i class="fa-solid fa-clock"></i> <span id="route-time">~<?= floor($totalTimeMinutes/60) ?>h <?= $totalTimeMinutes%60 ?>m</span>
             </span>
         </div>
     </div>
@@ -101,7 +105,7 @@ require_once 'includes/header.php';
     </div>
 </div>
 
-<div id="map" style="height: 400px; width: 100%; border-radius: var(--border-radius-lg); margin-bottom: 3rem; border: 4px solid white; box-shadow: var(--shadow);"></div>
+<div id="map" style="height: 500px; width: 100%; border-radius: var(--border-radius-lg); margin-bottom: 3rem; border: 4px solid white; box-shadow: var(--shadow);"></div>
 
 <script>
     var map = L.map('map');
@@ -109,21 +113,73 @@ require_once 'includes/header.php';
         attribution: '© OpenStreetMap contributors'
     }).addTo(map);
 
-    var points = [];
+    var waypoints = [];
     <?php foreach($items as $index => $item): if($item['latitude']): ?>
-        var marker = L.marker([<?= $item['latitude'] ?>, <?= $item['longitude'] ?>]).addTo(map)
-            .bindPopup("<b><?= ($index+1) ?>. <?= htmlspecialchars($item['name']) ?></b>");
-        points.push([<?= $item['latitude'] ?>, <?= $item['longitude'] ?>]);
-        <?php if($index == 0): ?>
-            marker.openPopup();
-        <?php endif; ?>
+        waypoints.push(L.latLng(<?= $item['latitude'] ?>, <?= $item['longitude'] ?>));
     <?php endif; endforeach; ?>
 
-    if (points.length > 0) {
-        var polyline = L.polyline(points, {color: 'var(--primary-color)', weight: 3, opacity: 0.7, dashArray: '10, 10'}).addTo(map);
-        map.fitBounds(polyline.getBounds(), {padding: [50, 50]});
+    if (waypoints.length > 1) {
+        var control = L.Routing.control({
+            waypoints: waypoints,
+            router: L.Routing.osrmv1({
+                serviceUrl: 'https://router.project-osrm.org/route/v1',
+                profile: '<?= $plan['transport_mode'] == 'walking' ? 'foot' : 'car' ?>'
+            }),
+            lineOptions: {
+                styles: [{color: 'var(--primary-color)', opacity: 0.8, weight: 6}]
+            },
+            createMarker: function(i, wp, n) {
+                var iconType = 'fa-location-dot';
+                var iconColor = 'var(--primary-color)';
+                var label = (i + 1);
+                
+                if (i === 0) {
+                    iconType = 'fa-flag-checkered';
+                    iconColor = '#10b981'; // Green for start
+                    label = 'START';
+                } else if (i === n - 1) {
+                    iconType = 'fa-flag';
+                    iconColor = '#ff2d75'; // Pink for end
+                    label = 'END';
+                }
+                
+                var icon = L.divIcon({
+                    className: 'custom-div-icon',
+                    html: `<div style="background-color:${iconColor}; color:white; padding:5px 10px; border-radius:30px; font-size:12px; font-weight:800; white-space:nowrap; border:2px solid white; box-shadow:0 2px 5px rgba(0,0,0,0.2);">
+                              <i class="fa-solid ${iconType}"></i> ${label}
+                           </div>`,
+                    iconSize: [80, 42],
+                    iconAnchor: [40, 21]
+                });
+                
+                return L.marker(wp.latLng, {icon: icon}).bindPopup("<b>" + (i + 1) + ". " + 
+                    (<?php echo json_encode(array_column($items, 'name')); ?>[i] || 'Point') + "</b>");
+            },
+            routeWhileDragging: false,
+            addWaypoints: false,
+            show: false
+        }).addTo(map);
+
+        control.on('routesfound', function(e) {
+            var routes = e.routes;
+            var summary = routes[0].summary;
+            var distKm = (summary.totalDistance / 1000).toFixed(2);
+            var timeSec = summary.totalTime;
+            
+            // Adjust time for walking/public/stay time
+            var stayTime = <?= count($items) ?> * 60; // 1 hour per place
+            var totalMin = Math.round(timeSec / 60) + stayTime;
+            
+            document.getElementById('route-distance').innerText = distKm;
+            document.getElementById('route-time').innerText = "~" + Math.floor(totalMin/60) + "h " + (totalMin%60) + "m";
+            
+            map.fitBounds(L.latLngBounds(waypoints));
+        });
+    } else if (waypoints.length === 1) {
+        L.marker(waypoints[0]).addTo(map).bindPopup("<b>1. <?= htmlspecialchars($items[0]['name'] ?? 'Point') ?></b>").openPopup();
+        map.setView(waypoints[0], 15);
     } else {
-        map.setView([7.2906, 80.6337], 13); // Default Kandy view
+        map.setView([7.2906, 80.6337], 13);
     }
 </script>
 
