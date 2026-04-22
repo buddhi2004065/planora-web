@@ -37,6 +37,19 @@ CREATE TABLE IF NOT EXISTS places (
 )";
 $pdo->exec($placesTable);
 
+$reviewsTable = "
+CREATE TABLE IF NOT EXISTS reviews (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    place_id INT NOT NULL,
+    rating INT NOT NULL CHECK (rating >= 1 AND rating <= 5),
+    comment TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (place_id) REFERENCES places(id) ON DELETE CASCADE
+)";
+$pdo->exec($reviewsTable);
+
 $plansTable = "
 CREATE TABLE IF NOT EXISTS plans (
     id INT AUTO_INCREMENT PRIMARY KEY,

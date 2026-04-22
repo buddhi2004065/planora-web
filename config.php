@@ -57,6 +57,18 @@ try {
     die("Connection failed: " . $e->getMessage());
 }
 
+// Validate active session (Logout if user was deleted during DB reset)
+if (isset($_SESSION['user_id'])) {
+    $vStmt = $pdo->prepare("SELECT id FROM users WHERE id = ?");
+    $vStmt->execute([$_SESSION['user_id']]);
+    if (!$vStmt->fetch()) {
+        session_unset();
+        session_destroy();
+        header("Location: login.php");
+        exit;
+    }
+}
+
 // Function to set flash message
 function setFlash($key, $message) {
     $_SESSION['flash'][$key] = $message;

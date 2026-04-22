@@ -181,6 +181,68 @@ require_once 'includes/header.php';
             .bindPopup("<b><?= htmlspecialchars($place['name']) ?></b>").openPopup();
     </script>
     <?php endif; ?>
+
+    <!-- Reviews Section -->
+    <div class="mt-5 pt-5 border-top" style="border-color: #eee;">
+        <div class="flex justify-between items-center mb-5">
+            <h3><i class="fa-solid fa-star" style="color: #fbbf24;"></i> Reviews & Ratings</h3>
+            <?php if ($is_logged_in && !$is_admin): ?>
+                <button onclick="document.getElementById('review-form').scrollIntoView({behavior:'smooth'})" class="btn btn-outline btn-sm">Write a Review</button>
+            <?php endif; ?>
+        </div>
+
+        <?php
+        $rStmt = $pdo->prepare("SELECT r.*, u.name as user_name FROM reviews r JOIN users u ON r.user_id = u.id WHERE r.place_id = ? ORDER BY r.created_at DESC");
+        $rStmt->execute([$place_id]);
+        $placeReviews = $rStmt->fetchAll(PDO::FETCH_ASSOC);
+        ?>
+
+        <?php if (empty($placeReviews)): ?>
+            <p class="text-muted text-center py-5 bg-light rounded-xl">No reviews yet for this destination. Be the first to share your experience!</p>
+        <?php else: ?>
+            <div class="grid grid-cols-1 grid-cols-2 gap-4">
+                <?php foreach ($placeReviews as $rev): ?>
+                    <div class="card p-4">
+                        <div class="flex justify-between mb-2">
+                            <span class="font-bold"><?= htmlspecialchars($rev['user_name']) ?></span>
+                            <span style="color: #fbbf24;">
+                                <?php for($i=1; $i<=5; $i++): ?>
+                                    <i class="fa-<?= $i <= $rev['rating'] ? 'solid' : 'regular' ?> fa-star"></i>
+                                <?php endfor; ?>
+                            </span>
+                        </div>
+                        <p class="text-muted italic">"<?= htmlspecialchars($rev['comment']) ?>"</p>
+                        <small class="text-muted block mt-2"><?= date('M d, Y', strtotime($rev['created_at'])) ?></small>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        <?php endif; ?>
+
+        <!-- Add Review Form -->
+        <?php if ($is_logged_in && !$is_admin): ?>
+            <div id="review-form" class="mt-5 card p-5" style="border: 2px solid var(--primary-light);">
+                <h4 class="mb-4">Share your experience</h4>
+                <form action="add_review.php" method="POST">
+                    <input type="hidden" name="place_id" value="<?= $place_id ?>">
+                    <div class="form-group" style="max-width: 300px;">
+                        <label class="form-label">Rating</label>
+                        <select name="rating" class="form-control" required>
+                            <option value="5">⭐⭐⭐⭐⭐ Excellent</option>
+                            <option value="4">⭐⭐⭐⭐ Very Good</option>
+                            <option value="3">⭐⭐⭐ Good</option>
+                            <option value="2">⭐⭐ Fair</option>
+                            <option value="1">⭐ Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Your Comment</label>
+                        <textarea name="comment" class="form-control" rows="4" placeholder="What did you like the most? Any tips for other travelers?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Post Review <i class="fa-solid fa-paper-plane ml-2"></i></button>
+                </form>
+            </div>
+        <?php endif; ?>
+    </div>
 </div>
 
 <?php require_once 'includes/footer.php'; ?>

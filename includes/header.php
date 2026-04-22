@@ -9,10 +9,7 @@ $is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Planora - Your Ultimate Travel Planner</title>
-    <!-- Google Fonts: Outfit -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
@@ -32,6 +29,7 @@ $is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
             <ul class="nav-menu" id="nav-menu">
                 <li><a href="index.php" class="nav-link">Home</a></li>
                 <li><a href="places.php" class="nav-link">Explore</a></li>
+                <li><a href="reviews.php" class="nav-link">Reviews</a></li>
                 
                 <?php if($is_logged_in): ?>
                     <?php if(!$is_admin): ?>
