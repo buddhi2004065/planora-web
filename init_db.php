@@ -29,7 +29,11 @@ CREATE TABLE IF NOT EXISTS places (
     image_url VARCHAR(255) NOT NULL,
     popularity_rank INT NOT NULL,
     latitude DECIMAL(10, 8),
-    longitude DECIMAL(11, 8)
+    longitude DECIMAL(11, 8),
+    dress_code VARCHAR(255),
+    best_time VARCHAR(100),
+    ticket_price VARCHAR(100),
+    restaurants TEXT
 )";
 $pdo->exec($placesTable);
 

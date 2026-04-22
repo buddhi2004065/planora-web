@@ -98,7 +98,7 @@ require_once 'includes/header.php';
                 <p><?= nl2br(htmlspecialchars($place['description'])) ?></p>
             </div>
 
-            <?php if($is_logged_in): ?>
+            <?php if($is_logged_in && !$is_admin): ?>
                 <div class="card p-4" style="background: var(--primary-light); border: 1px solid var(--primary-color); border-radius: var(--border-radius-lg);">
                     <h4 class="mb-3">Add to your itinerary</h4>
                     <?php if(empty($plans)): ?>
@@ -116,7 +116,7 @@ require_once 'includes/header.php';
                         </form>
                     <?php endif; ?>
                 </div>
-            <?php else: ?>
+            <?php elseif(!$is_admin): ?>
                 <div class="card p-4 text-center">
                     <p class="mb-3">Want to visit <?= htmlspecialchars($place['name']) ?>?</p>
                     <a href="login.php" class="btn btn-primary btn-block">Log in to Start Planning</a>

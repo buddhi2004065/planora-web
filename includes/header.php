@@ -1,6 +1,7 @@
-<?php
+<?php 
 require_once 'config.php';
 $is_logged_in = isset($_SESSION['user_id']);
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -33,7 +34,11 @@ $is_logged_in = isset($_SESSION['user_id']);
                 <li><a href="places.php" class="nav-link">Explore</a></li>
                 
                 <?php if($is_logged_in): ?>
-                    <li><a href="dashboard.php" class="nav-link">My Plans</a></li>
+                    <?php if(!$is_admin): ?>
+                        <li><a href="dashboard.php" class="nav-link">My Plans</a></li>
+                    <?php else: ?>
+                        <li><span class="badge" style="background:#fef3c7; color:#92400e; padding:0.5rem 1rem; border-radius:30px; font-weight:700;"><i class="fa-solid fa-shield-halved"></i> Admin Mode</span></li>
+                    <?php endif; ?>
                     <li><a href="logout.php" class="btn btn-secondary btn-sm"><i class="fa-solid fa-right-from-bracket"></i> Logout</a></li>
                 <?php else: ?>
                     <li><a href="login.php" class="nav-link">Login</a></li>

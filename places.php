@@ -38,7 +38,7 @@ if ($is_logged_in) {
             </a>
             
             <div class="card-action-bar mt-4 pt-4 border-top" style="border-top: 1px solid #f1f1f1;">
-                <?php if($is_logged_in): ?>
+                <?php if($is_logged_in && !$is_admin): ?>
                     <?php if(empty($plans)): ?>
                         <a href="create_plan.php" class="btn btn-primary btn-block">
                             <i class="fa-solid fa-plus"></i> Create a plan to add this
@@ -59,7 +59,7 @@ if ($is_logged_in) {
                             </div>
                         </form>
                     <?php endif; ?>
-                <?php else: ?>
+                <?php elseif(!$is_admin): ?>
                     <a href="login.php" class="btn btn-secondary btn-block">
                         <i class="fa-solid fa-lock"></i> Log in to create plan
                     </a>

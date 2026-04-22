@@ -8,6 +8,12 @@ if (!$is_logged_in) {
     exit;
 }
 
+if (isset($_SESSION['is_admin']) && $_SESSION['is_admin']) {
+    setFlash('error', 'Super Admins cannot create travel plans.');
+    header("Location: index.php");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $plan_name = trim($_POST['plan_name']);
     $transport_mode = $_POST['transport_mode'] ?? 'driving';

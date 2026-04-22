@@ -39,10 +39,19 @@ $places = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <p class="text-muted mb-3"><i class="fa-solid fa-location-dot" style="color: var(--primary-color);"></i> <?= htmlspecialchars($place['location']) ?></p>
             <p class="card-text"><?= htmlspecialchars(substr($place['description'], 0, 100)) ?>...</p>
             
-            <div class="card-footer mt-4">
+            <div class="flex gap-2">
                 <a href="place_details.php?id=<?= $place['id'] ?>" class="btn btn-secondary btn-block">
-                    <i class="fa-solid fa-circle-info"></i> View Details
+                    <i class="fa-solid fa-circle-info"></i> Details
                 </a>
+                <?php if($is_logged_in && !$is_admin): ?>
+                    <form action="add_to_plan.php" method="POST" class="flex-1">
+                        <input type="hidden" name="place_id" value="<?= $place['id'] ?>">
+                        <input type="hidden" name="plan_id" value="<?= htmlspecialchars($plans[0]['id'] ?? '') ?>">
+                        <button type="submit" class="btn btn-primary btn-block" <?= empty($plans) ? 'disabled' : '' ?>>
+                            <i class="fa-solid fa-plus"></i> Add
+                        </button>
+                    </form>
+                <?php endif; ?>
             </div>
         </div>
     </div>
