@@ -13,6 +13,9 @@ if (!$place) {
     exit;
 }
 
+$is_logged_in = isset($_SESSION['user_id']);
+$is_admin = isset($_SESSION['is_admin']) && $_SESSION['is_admin'];
+
 // Fetch user's plans for the 'Add to Plan' logic
 $plans = [];
 if ($is_logged_in) {
@@ -20,8 +23,9 @@ if ($is_logged_in) {
     $planStmt->execute([$_SESSION['user_id']]);
     $plans = $planStmt->fetchAll(PDO::FETCH_ASSOC);
 }
-// Handle Edit Mode Toggle
-$is_edit_mode = isset($_GET['edit']) && $_GET['edit'] == 1;
+
+// Handle Edit Mode Toggle (ONLY FOR ADMINS)
+$is_edit_mode = $is_admin && isset($_GET['edit']) && $_GET['edit'] == 1;
 
 require_once 'includes/header.php';
 ?>
@@ -78,9 +82,11 @@ require_once 'includes/header.php';
             <div class="flex justify-between items-center mb-4">
                 <h1 class="display-4 mb-0"><?= htmlspecialchars($place['name']) ?></h1>
                 <div class="flex gap-2">
+                    <?php if($is_admin): ?>
                     <a href="place_details.php?id=<?= $place['id'] ?>&edit=1" class="btn btn-secondary btn-sm" title="Edit this destination">
                         <i class="fa-solid fa-pen-to-square"></i> Edit
                     </a>
+                    <?php endif; ?>
                     <span class="card-badge" style="position: static; font-size: 1rem;">Rank #<?= htmlspecialchars($place['popularity_rank']) ?></span>
                 </div>
             </div>

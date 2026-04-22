@@ -1,6 +1,12 @@
 <?php
 require_once 'config.php';
 
+if (!isset($_SESSION['is_admin']) || !$_SESSION['is_admin']) {
+    setFlash('error', 'Authentication failed. Only Super Admins can perform this action.');
+    header("Location: index.php");
+    exit;
+}
+
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $place_id = (int)$_POST['place_id'];
     $name = trim($_POST['name']);
