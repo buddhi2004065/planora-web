@@ -24,15 +24,35 @@ if (file_exists($dotenvPath)) {
     }
 }
 
-$host = getenv('DB_HOST') ;
-$port = getenv('DB_PORT') ;
-$dbname = getenv('DB_NAME') ;
+$host = getenv('DB_HOST');
+$port = getenv('DB_PORT');
+$dbname = getenv('DB_NAME');
 $username = getenv('DB_USER');
-$password = getenv('DB_PASSWORD') ;
+$password = getenv('DB_PASSWORD');
+$sslCa = getenv('DB_SSL_CA');
 
+$options = [
+    PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+    PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+];
+
+if (!empty($sslCa)) {
+    $sslCaPath = $sslCa;
+    if (!file_exists($sslCaPath)) {
+        $sslCaPath = __DIR__ . '/' . ltrim($sslCa, "\/");
+    }
+
+    if (!file_exists($sslCaPath)) {
+        die("Connection failed: SSL CA file not found at '$sslCa'. Please set DB_SSL_CA to a valid path.");
+    }
+
+    $options[PDO::MYSQL_ATTR_SSL_CA] = $sslCaPath;
+    $options[PDO::MYSQL_ATTR_SSL_VERIFY_SERVER_CERT] = true;
+}
+
+$dsn = "mysql:host=$host;port=$port;dbname=$dbname;charset=utf8mb4";
 try {
-    $pdo = new PDO("mysql:host=$host;port=$port;dbname=$dbname", $username, $password);
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO($dsn, $username, $password, $options);
 } catch (PDOException $e) {
     die("Connection failed: " . $e->getMessage());
 }
