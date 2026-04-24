@@ -31,10 +31,14 @@ if ($is_logged_in) {
                     <p class="text-muted"><i class="fa-solid fa-location-dot" style="color: var(--primary-color);"></i> <?= htmlspecialchars($place['location']) ?></p>
                 </div>
             </div>
-            <p class="card-text"><?= htmlspecialchars($place['description']) ?></p>
+            <p class="card-text mb-4"><?= htmlspecialchars(substr($place['description'], 0, 150)) ?>...</p>
+            
+            <a href="place_details.php?id=<?= $place['id'] ?>" class="btn btn-outline btn-block mb-3">
+                <i class="fa-solid fa-circle-info"></i> Learn More & Details
+            </a>
             
             <div class="card-action-bar mt-4 pt-4 border-top" style="border-top: 1px solid #f1f1f1;">
-                <?php if($is_logged_in): ?>
+                <?php if($is_logged_in && !$is_admin): ?>
                     <?php if(empty($plans)): ?>
                         <a href="create_plan.php" class="btn btn-primary btn-block">
                             <i class="fa-solid fa-plus"></i> Create a plan to add this
@@ -55,7 +59,7 @@ if ($is_logged_in) {
                             </div>
                         </form>
                     <?php endif; ?>
-                <?php else: ?>
+                <?php elseif(!$is_admin): ?>
                     <a href="login.php" class="btn btn-secondary btn-block">
                         <i class="fa-solid fa-lock"></i> Log in to create plan
                     </a>

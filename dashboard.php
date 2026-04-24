@@ -8,6 +8,12 @@ if (!$is_logged_in) {
     exit;
 }
 
+if ($_SESSION['is_admin']) {
+    setFlash('info', 'Admins manage destinations, not travel plans.');
+    header("Location: index.php");
+    exit;
+}
+
 $stmt = $pdo->prepare("SELECT * FROM plans WHERE user_id = ? ORDER BY created_at DESC");
 $stmt->execute([$_SESSION['user_id']]);
 $plans = $stmt->fetchAll(PDO::FETCH_ASSOC);
